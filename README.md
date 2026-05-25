@@ -1,11 +1,4 @@
-# SafePress: safety-preserving compression for small LLMs / agents
-
-SafePress is a **research toolkit** for studying **how post-training compression (esp. 4-bit quantization)** can degrade **safety alignment**, and for building **mixed-precision "safety-aware" quantized models** that preserve refusal / policy behavior with minimal compute+memory overhead.
-
-The core method -- **Safety-Selective Mixed Precision (SSMP)** -- uses a first-order Taylor drift proxy to identify safety-critical weight blocks, keeps them in FP16, and quantizes the rest to 4-bit. The toolkit provides a complete experimental framework for characterizing, diagnosing, and mitigating quantization-induced safety degradation.
-
-> This repo is meant for **paper-quality experiments** (configs, logging, reproducibility), not a one-off MVP.
-
+# Structural Collapse of Safety-Critical Weight Protection Scorers Under Group-Wise Post-Training Quantization
 ---
 
 ## Pipeline overview
