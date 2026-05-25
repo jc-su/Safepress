@@ -1,0 +1,53 @@
+# Paper-style sweep: all methods x budgets for Llama-3.1-8B-Instruct.
+# Usage: safepress sweep --config configs/paper_sweep_llama31.yaml
+
+model_id: meta-llama/Llama-3.1-8B-Instruct
+model_tag: llama31_8b
+
+out_root: runs/sweep_llama31
+summary_csv: runs/sweep_llama31/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/utility_alpaca.jsonl
+prompt_key: prompt
+max_prompts: 128
+
+methods:
+  - fp16
+  - int4
+  - ssmp
+  - random
+  - magnitude
+  - snip
+  - qresafe_noft
+  - lastn
+  - cwp
+
+budgets:
+  - 0.005
+  - 0.01
+  - 0.02
+  - 0.04
+  - 0.08
+
+# Quantization
+bits: 4
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 2048
+
+# Generation
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+# Baselines
+seed: 0
+last_n_layers: 4
+cwp_beta: 1.0
+
+refusal_template: "I'm sorry, but I can't help with that."
+try_strongreject: false

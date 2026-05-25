@@ -1,0 +1,18 @@
+experiment: sweep
+model_ids:
+  - Qwen/Qwen3-8B
+  - meta-llama/Llama-3.1-8B-Instruct
+  - google/gemma-3-4b-it
+dtype: float16
+device_map: auto
+calib_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+refusal_template: "I'm sorry, but I can't help with that."
+bits: 4
+group_size: 128
+block_size: 64
+budgets: [0.005, 0.01, 0.02, 0.04, 0.08]
+batch_size: 1
+max_length: 2048
+max_new_tokens: 256
+out_dir: runs/sweep

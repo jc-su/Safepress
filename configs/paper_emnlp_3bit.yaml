@@ -1,0 +1,61 @@
+# 3-bit variant of the EMNLP main sweep -- this is the regime where SSMP is
+# expected to actually separate from baselines (4-bit is statistically null
+# per the existing n=128 results).
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b_3bit
+
+out_root: runs/emnlp_sweep_3bit
+summary_csv: runs/emnlp_sweep_3bit/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400  # = full HarmBench behavior set
+
+seeds: [0, 1, 2]
+deterministic: true
+
+methods:
+  - fp16
+  - int4               # uniform 3-bit
+  - ssmp
+  - random
+  - magnitude
+  - snip
+  - gradient_only
+  - qresafe_noft
+  - qresafe
+  - cwp
+  - cwp_published
+
+budgets: [0.005, 0.01, 0.02, 0.04, 0.08]
+
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 2048
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: true
+harmbench_classifier_id: cais/HarmBench-Llama-2-13b-cls
+harmbench_classifier_batch_size: 4
+
+try_strongreject: false
+
+last_n_layers: 4
+cwp_beta: 1.0
+
+qresafe_snip_budget: 0.10
+qresafe_lora_rank: 16
+qresafe_n_steps: 200
+qresafe_beta: 0.1
+qresafe_lr: 1.0e-5
+
+refusal_template: "I'm sorry, but I can't help with that."

@@ -1,0 +1,48 @@
+# Third model in the G2 panel: Ministral-8B-Instruct-2410 (Mistral, Oct 2024).
+#
+# Tests whether the Fisher>SSMP finding generalises beyond Qwen3-8B and
+# Llama-3.1-8B-Instruct. Run all three seeds (0, 1, 2) at once so the
+# multi-seed Mistral data lands in one sweep.
+
+model_id: mistralai/Ministral-8B-Instruct-2410
+model_tag: mistral_8b_3bit_g2pilot
+
+out_root: runs/emnlp_g2_pilot_mistral
+summary_csv: runs/emnlp_g2_pilot_mistral/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0, 1, 2]
+deterministic: true
+
+methods:
+  - fp16
+  - int4
+  - ssmp
+  - gradient_only
+  - snip
+  - magnitude
+
+budgets: [0.04, 0.08]
+
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+last_n_layers: 4
+cwp_beta: 1.0
+refusal_template: "I'm sorry, but I can't help with that."

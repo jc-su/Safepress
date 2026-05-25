@@ -1,0 +1,32 @@
+models:
+  # ── Primary model (newest, strongest safety alignment) ──
+  qwen3-8b:
+    id: Qwen/Qwen3-8B
+    family: qwen
+    size: 8B
+    n_layers: 36
+    hidden_dim: 4096
+
+  # ── Secondary (community standard for safety research) ──
+  llama-3.1-8b:
+    id: meta-llama/Llama-3.1-8B-Instruct
+    family: llama
+    size: 8B
+    n_layers: 32
+    hidden_dim: 4096
+
+  # ── Cross-family generalization (different family + size) ──
+  gemma-3-4b:
+    id: google/gemma-3-4b-it
+    family: gemma
+    size: 4B
+    n_layers: 34
+    hidden_dim: 2560
+
+  # ── Smaller ablation ──
+  qwen2.5-3b:
+    id: Qwen/Qwen2.5-3B-Instruct
+    family: qwen
+    size: 3B
+    n_layers: 36
+    hidden_dim: 2048

@@ -1,0 +1,86 @@
+# EMNLP 2026 paper sweep -- main experimental config.
+#
+# Differences from configs/paper_sweep.yaml (the original sweep):
+#   - 5 main panel models (multi-config copies are in configs/paper_emnlp_*.yaml).
+#   - Multi-seed (3 seeds) with paired-bootstrap reporting in the CSV summary.
+#   - N=512 prompts per condition (4x the previous 128).
+#   - HarmBench-classifier ASR added as the primary safety metric.
+#   - New baselines: qresafe (DPO patch) and cwp_published (60% budget).
+#   - Deterministic decode for reproducibility.
+#
+# Use:
+#   safepress sweep --config configs/paper_emnlp.yaml
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b
+
+out_root: runs/emnlp_sweep
+summary_csv: runs/emnlp_sweep/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+# HarmBench has exactly 400 behaviors. Setting max_prompts above that would
+# silently truncate at len(eval set); leaving it at 400 makes the run explicit.
+max_prompts: 400
+
+# Multi-seed
+seeds: [0, 1, 2]
+deterministic: true
+
+# Methods (Tier-1 paper comparison set)
+methods:
+  - fp16
+  - int4
+  - ssmp
+  - random
+  - magnitude
+  - snip
+  - gradient_only        # Fisher g^2 (key scoring ablation)
+  - qresafe_noft         # SNIP without DPO (ablation control)
+  - qresafe              # Real Q-resafe (SNIP + LoRA-DPO patch)
+  - cwp                  # CWP at matched small budgets
+  - cwp_published        # CWP at the published 60% budget
+
+# Budget grid for the budget-aware methods.
+budgets:
+  - 0.005
+  - 0.01
+  - 0.02
+  - 0.04
+  - 0.08
+
+# Quantization
+bits: 4
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 2048
+
+# Generation (deterministic)
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+# Primary safety metric
+use_harmbench_classifier: true
+harmbench_classifier_id: cais/HarmBench-Llama-2-13b-cls
+harmbench_classifier_batch_size: 4
+
+# Optional secondary safety metric (slow + requires OPENAI_API_KEY).
+try_strongreject: false
+
+# Baselines
+last_n_layers: 4
+cwp_beta: 1.0
+
+# Q-resafe DPO hyperparameters
+qresafe_snip_budget: 0.10
+qresafe_lora_rank: 16
+qresafe_n_steps: 200
+qresafe_beta: 0.1
+qresafe_lr: 1.0e-5
+
+refusal_template: "I'm sorry, but I can't help with that."

@@ -1,0 +1,9 @@
+experiment: phase_transition
+model_id: Qwen/Qwen3-8B
+dtype: float16
+device_map: auto
+eval_prompts: data/harmbench.jsonl
+bit_widths: [8, 4, 3, 2]
+group_size: 128
+max_new_tokens: 256
+out_dir: runs/phase_transition

@@ -1,0 +1,62 @@
+# G2 pilot config: scoring ablation at 3-bit on Qwen3-8B.
+#
+# This is the LOAD-BEARING gate per PLAN §16. Pass criterion:
+#   At 3-bit, on {Qwen3-8B} x {4%, 8%} budgets, SSMP achieves lower
+#   HarmBench-classifier ASR than each of {gradient_only/Fisher, snip,
+#   magnitude} on >= 3 of 4 model-budget cells after Holm correction.
+#
+# This pilot is restricted to a single seed first; on signal, expand to 3
+# seeds and add Llama-3.1-8B.
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b_3bit_g2pilot
+
+out_root: runs/emnlp_g2_pilot
+summary_csv: runs/emnlp_g2_pilot/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+# Single seed first to verify pipeline; multi-seed after.
+seeds: [0]
+deterministic: true
+
+# G2 scorer family + the no-protection references.
+# SSMP (= |g.dw|) vs gradient_only (Fisher g^2) vs snip (|g.w|) vs magnitude (|w|).
+# fp16 + int4 are the two no-protect references.
+methods:
+  - fp16
+  - int4
+  - ssmp
+  - gradient_only
+  - snip
+  - magnitude
+
+# Two budgets per PLAN §16 G2 cell definition.
+budgets: [0.04, 0.08]
+
+# 3-bit (this YAML is intentionally specific; do not change to 4 without
+# also adjusting the G2 cell math).
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+# Heuristic refusal as primary metric for the pilot (fast).
+# Once signal is confirmed, re-run with the HarmBench classifier ON.
+use_harmbench_classifier: false
+try_strongreject: false
+
+last_n_layers: 4
+cwp_beta: 1.0
+
+refusal_template: "I'm sorry, but I can't help with that."

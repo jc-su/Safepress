@@ -1,0 +1,40 @@
+# Fisher@60% 4-bit ablation — REMAINING conditions only.
+# (fp16 was completed in the first attempt; this re-runs int4 + Fisher@8/60%
+# after fixing the bnb fallback in quantize.py)
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b_4bit_fisher60
+
+out_root: runs/emnlp_4bit_ablation/qwen3
+summary_csv: runs/emnlp_4bit_ablation/qwen3/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - int4
+  - gradient_only
+
+budgets: [0.08, 0.60]
+
+bits: 4
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+refusal_template: "I'm sorry, but I can't help with that."

@@ -1,0 +1,48 @@
+# Phase 4 baselines on GLM-4-9B-0414 at 3-bit: Q-resafe + CWP@60%.
+
+model_id: THUDM/GLM-4-9B-0414
+model_tag: glm4_9b_3bit_baselines
+
+out_root: runs/emnlp_baselines/glm4
+summary_csv: runs/emnlp_baselines/glm4/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - fp16
+  - int4
+  - qresafe
+  - cwp_published
+
+budgets: [0.08]
+
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+qresafe_snip_budget: 0.10
+qresafe_lora_rank: 16
+qresafe_n_steps: 200
+qresafe_beta: 0.1
+qresafe_lr: 1.0e-5
+
+cwp_beta: 1.0
+refusal_template: "I'm sorry, but I can't help with that."
+trust_remote_code: true

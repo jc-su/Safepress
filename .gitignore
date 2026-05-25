@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments / secrets
+.env
+.venv/
+venv/
+
+# Experiment outputs & data (not version-controlled)
+runs/
+data/
+figures/
+tables/
+*.pt
+*.bin
+*.safetensors
+
+# OS
+.DS_Store

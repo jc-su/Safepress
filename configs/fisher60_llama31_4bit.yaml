@@ -1,0 +1,41 @@
+# Fisher@60% on Llama-3.1-8B-Instruct at 4-BIT (ablation vs 3-bit headline).
+# Mirrors fisher60_qwen3_4bit.yaml but on the strongly-aligned model.
+# Bnb fallback → simulated_int4 via the quantize.py patch.
+
+model_id: meta-llama/Llama-3.1-8B-Instruct
+model_tag: llama31_8b_4bit_fisher60
+
+out_root: runs/emnlp_4bit_ablation/llama31
+summary_csv: runs/emnlp_4bit_ablation/llama31/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - fp16
+  - int4
+  - gradient_only
+
+budgets: [0.08, 0.60]
+
+bits: 4
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+refusal_template: "I'm sorry, but I can't help with that."

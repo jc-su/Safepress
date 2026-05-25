@@ -1,0 +1,37 @@
+# Fisher@60% on DeepSeek-R1-Distill-Llama-8B at 3-bit. CWP-equivalent under T2.
+
+model_id: deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+model_tag: deepseek_r1_distill_llama_8b_3bit_fisher60
+
+out_root: runs/emnlp_fisher60/deepseek
+summary_csv: runs/emnlp_fisher60/deepseek/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - gradient_only
+
+budgets: [0.60]
+
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+refusal_template: "I'm sorry, but I can't help with that."

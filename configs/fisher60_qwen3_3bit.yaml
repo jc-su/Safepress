@@ -1,0 +1,41 @@
+# Fisher@60% on Qwen3-8B at 3-bit.
+# CWP-equivalent under Theorem 2 (the β·I_gen subtraction is a per-group
+# constant and does not change ranking under symmetric group-wise PTQ).
+# Single method per config to avoid the compound-condition OOM that hit
+# Phase 4 baselines (qresafe + cwp_published in one sweep saturated 48GB).
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b_3bit_fisher60
+
+out_root: runs/emnlp_fisher60/qwen3
+summary_csv: runs/emnlp_fisher60/qwen3/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - gradient_only
+
+budgets: [0.60]
+
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+refusal_template: "I'm sorry, but I can't help with that."

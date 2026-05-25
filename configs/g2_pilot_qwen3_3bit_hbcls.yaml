@@ -1,0 +1,53 @@
+# Path-1 validation rerun: same as g2_pilot_qwen3_3bit.yaml but with the
+# HarmBench classifier turned ON. Confirms whether Fisher > SSMP under the
+# strong HarmBench-cls ASR metric (not just heuristic refusal).
+#
+# If Fisher > SSMP holds here too, the paper pivots to "Fisher-based safety-
+# critical weight protection" (Plan A-C hybrid in the conversation).
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b_3bit_g2pilot_hbcls
+
+out_root: runs/emnlp_g2_pilot_hbcls
+summary_csv: runs/emnlp_g2_pilot_hbcls/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - fp16
+  - int4
+  - ssmp
+  - gradient_only
+  - snip
+  - magnitude
+
+budgets: [0.04, 0.08]
+
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+# HarmBench classifier ON. Adds ~50% wall time vs heuristic-only.
+use_harmbench_classifier: true
+harmbench_classifier_id: cais/HarmBench-Llama-2-13b-cls
+harmbench_classifier_batch_size: 4
+try_strongreject: false
+
+last_n_layers: 4
+cwp_beta: 1.0
+
+refusal_template: "I'm sorry, but I can't help with that."

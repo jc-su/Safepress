@@ -1,0 +1,41 @@
+# Fisher@60% on Qwen3-8B at 4-BIT (ablation vs 3-bit headline).
+# Used to test whether the structural-collapse / Fisher-dominance result is
+# specific to the catastrophic 3-bit regime or generalises.
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b_4bit_fisher60
+
+out_root: runs/emnlp_4bit_ablation/qwen3
+summary_csv: runs/emnlp_4bit_ablation/qwen3/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - fp16
+  - int4
+  - gradient_only
+
+budgets: [0.08, 0.60]
+
+bits: 4
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+refusal_template: "I'm sorry, but I can't help with that."

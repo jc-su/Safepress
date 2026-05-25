@@ -1,0 +1,57 @@
+# Phase 4 baselines on Qwen3-8B at 3-bit: real Q-resafe (DPO patch) + CWP@60%.
+#
+# fp16 and int4 are included for absolute reference (cheap; no scoring).
+# qresafe: full quantize, then LoRA-DPO patch on SNIP-scored modules.
+# cwp_published: forces 0.60 protect budget internally (paper recipe).
+
+model_id: Qwen/Qwen3-8B
+model_tag: qwen3_8b_3bit_baselines
+
+out_root: runs/emnlp_baselines/qwen3
+summary_csv: runs/emnlp_baselines/qwen3/sweep_summary.csv
+
+safety_prompts: data/advbench.jsonl
+eval_prompts: data/harmbench.jsonl
+utility_prompts: data/dolly.jsonl
+prompt_key: prompt
+max_prompts: 400
+
+seeds: [0]
+deterministic: true
+
+methods:
+  - fp16
+  - int4
+  - qresafe
+  - cwp_published
+
+# budgets here is only used for non-fp16/int4/qresafe/cwp_published methods.
+# Since we use only those four, this is a placeholder. cwp_published forces
+# 0.60 internally; qresafe ignores budget and uses qresafe_snip_budget below.
+budgets: [0.08]
+
+bits: 3
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 1024
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+use_harmbench_classifier: false
+try_strongreject: false
+
+# Q-resafe DPO hyperparameters (per paper defaults).
+qresafe_snip_budget: 0.10
+qresafe_lora_rank: 16
+qresafe_n_steps: 200
+qresafe_beta: 0.1
+qresafe_lr: 1.0e-5
+
+# CWP parameters
+cwp_beta: 1.0
+
+refusal_template: "I'm sorry, but I can't help with that."

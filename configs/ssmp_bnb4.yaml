@@ -1,0 +1,31 @@
+model_id: Qwen/Qwen3-8B
+dtype: float16
+device_map: auto
+
+calib_prompts: data/calib.jsonl
+eval_prompts: data/eval.jsonl
+prompt_key: prompt
+max_prompts: 128
+
+refusal_template: "I'm sorry, but I can't help with that."
+bits: 4
+group_size: 128
+block_size: 64
+batch_size: 1
+max_length: 2048
+
+budget: 0.02
+
+quant_backend: bnb4
+bnb_quant_type: nf4
+bnb_compute_dtype: float16
+bnb_quant_storage: uint8
+disable_double_quant: false
+
+max_new_tokens: 256
+temperature: 0.0
+top_p: 1.0
+do_sample: false
+
+try_strongreject: false
+strongreject_evaluator: strongreject_rubric

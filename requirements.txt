@@ -1,0 +1,13 @@
+torch
+transformers>=4.41.0
+accelerate>=0.30.0
+datasets>=2.18.0
+tqdm
+pyyaml
+numpy
+pandas
+# optional:
+# bitsandbytes>=0.43.0
+# agentdojo>=0.1.30
+# openai>=1.0.0
+# strong_reject @ git+https://github.com/dsbowen/strong_reject.git@main
